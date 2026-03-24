@@ -1,15 +1,22 @@
 import { TaskCard } from "../components/TaskCard.jsx";
 
-export function HomeView({ greeting, dateLabel, stats, focusTasks, onToggle }) {
+export function HomeView({
+  welcomeName,
+  welcomeDate,
+  stats,
+  focusTasks,
+  onToggle,
+}) {
   return (
     <>
-      <header className="page-head">
-        <div>
-          <p className="page-head__eyebrow">Visão geral</p>
-          <h1 className="page-head__title">{greeting}</h1>
-          <p className="page-head__sub">{dateLabel}</p>
-        </div>
-      </header>
+      <section className="welcome-hero" aria-labelledby="welcome-title">
+        <p className="welcome-hero__date">{welcomeDate}</p>
+        <h1 id="welcome-title" className="welcome-hero__title">
+          Bem-vinda de volta,{" "}
+          <span className="welcome-hero__name">{welcomeName}</span>! Vamos
+          organizar o dia?
+        </h1>
+      </section>
 
       <div className="metric-row">
         <div className="metric">
@@ -17,7 +24,9 @@ export function HomeView({ greeting, dateLabel, stats, focusTasks, onToggle }) {
           <span className="metric__label">Tarefas</span>
         </div>
         <div className="metric">
-          <span className="metric__value metric__value--accent">{stats.pending}</span>
+          <span className="metric__value metric__value--accent">
+            {stats.pending}
+          </span>
           <span className="metric__label">Abertas</span>
         </div>
         <div className="metric">
@@ -33,7 +42,9 @@ export function HomeView({ greeting, dateLabel, stats, focusTasks, onToggle }) {
         </div>
         <div className="stack">
           {focusTasks.length === 0 ? (
-            <p className="empty-hint">Nada pendente com prioridade alta. Ótimo momento para planejar.</p>
+            <p className="empty-hint">
+              Nada pendente com prioridade alta. Ótimo momento para planejar.
+            </p>
           ) : (
             focusTasks.map((t) => (
               <TaskCard
