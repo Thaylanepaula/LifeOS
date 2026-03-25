@@ -249,19 +249,28 @@ function PersonaGestora() {
 }
 
 export function Auth() {
-  const [showForm, setShowForm] = useState(false);
+  const [isAuthView, setIsAuthView] = useState(false);
+  const [logoIntroDone, setLogoIntroDone] = useState(false);
   const [mode, setMode] = useState("signin");
+  const [signinStep, setSigninStep] = useState(1);
+  const [signinDirection, setSigninDirection] = useState("forward");
   const [fullName, setFullName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [busy, setBusy] = useState(false);
+  const [signupStep, setSignupStep] = useState(1);
+  const [selectedProfile, setSelectedProfile] = useState("Analista");
+  const [emailTouched, setEmailTouched] = useState(false);
 
   const h = new Date().getHours();
   const base = h < 12 ? 78 : h < 18 ? 62 : 45;
   const disposição = clamp(base, 0, 100);
   const energiaLabel = disposição >= 60 ? "Tarefas Complexas" : "Microtarefas";
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const hasMinLen = password.length >= 8;
+  const hasSymbol = /[^A-Za-z0-9]/.test(password);
+  const isPasswordStrong = hasMinLen && hasSymbol;
 
   const personas = [
     { id: "analista", label: "Analista", Node: PersonaAnalista },
@@ -276,6 +285,52 @@ export function Auth() {
     }, 5000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (!isAuthView || logoIntroDone) return;
+    const t = setTimeout(() => setLogoIntroDone(true), 1600);
+    return () => clearTimeout(t);
+  }, [isAuthView, logoIntroDone]);
+
+  useEffect(() => {
+    function syncAuthViewWithHash() {
+      setIsAuthView(window.location.hash === "#login");
+    }
+
+    syncAuthViewWithHash();
+    window.addEventListener("hashchange", syncAuthViewWithHash);
+    window.addEventListener("popstate", syncAuthViewWithHash);
+
+    return () => {
+      window.removeEventListener("hashchange", syncAuthViewWithHash);
+      window.removeEventListener("popstate", syncAuthViewWithHash);
+    };
+  }, []);
+
+  function openLoginView() {
+    if (window.location.hash !== "#login") {
+      window.location.hash = "login";
+    } else {
+      setIsAuthView(true);
+    }
+    setMode("signin");
+    setSigninStep(1);
+    setSigninDirection("forward");
+    setFeedback(null);
+  }
+
+  function closeLoginView() {
+    const cleanUrl = `${window.location.pathname}${window.location.search}`;
+    if (window.location.hash === "#login") {
+      window.history.pushState(null, "", cleanUrl);
+      setIsAuthView(false);
+    } else {
+      setIsAuthView(false);
+    }
+    setSigninStep(1);
+    setSigninDirection("forward");
+    setFeedback(null);
+  }
 
   async function handleSignIn(e) {
     e.preventDefault();
@@ -292,20 +347,63 @@ export function Auth() {
     }
   }
 
+  async function handleForgotPassword() {
+    if (!isEmailValid) {
+      setFeedback({
+        type: "error",
+        text: "Digite um e-mail valido para recuperar a senha.",
+      });
+      return;
+    }
+    setFeedback(null);
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+      if (error) {
+        setFeedback({ type: "error", text: error.message });
+      } else {
+        setFeedback({
+          type: "success",
+          text: "Enviamos um link de recuperacao de senha para seu e-mail.",
+        });
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleContinueSignInStep() {
+    if (!email.trim()) {
+      setFeedback({
+        type: "error",
+        text: "Informe seu e-mail ou numero de telefone para continuar.",
+      });
+      return;
+    }
+    setFeedback(null);
+    setSigninDirection("forward");
+    setSigninStep(2);
+  }
+
+  function handleBackToEmailStep() {
+    setFeedback(null);
+    setSigninDirection("backward");
+    setSigninStep(1);
+  }
+
   async function handleSignUp(e) {
     e.preventDefault();
     setFeedback(null);
     setBusy(true);
     try {
       const nome = fullName.trim();
-      const data = birthDate;
       const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
           data: {
             full_name: nome,
-            birth_date: data,
+            template_profile: selectedProfile,
           },
         },
       });
@@ -322,193 +420,160 @@ export function Auth() {
   }
 
   return (
-    <div className="auth-screen auth-screen--landing">
-      <div className="auth-landing">
-        <section className="icloud-hero" aria-label="Luma">
-          <div
-            className="icloud-avatar-wrap"
-            data-persona={personas[personaIdx].id}
-          >
-            <div className="icloud-avatar" aria-hidden="true">
-              <div
-                key={personas[personaIdx].id}
-                className="icloud-avatar__persona"
-                aria-label={personas[personaIdx].label}
+    <div
+      className={`auth-screen auth-screen--landing${
+        isAuthView ? " auth-screen--auth-only" : ""
+      }`}
+    >
+      <div className={`auth-landing${isAuthView ? " auth-landing--auth-only" : ""}`}>
+        {isAuthView ? (
+        <div className="account-auth">
+          <header className="account-auth__header">
+            <span className="account-auth__brand">Luma</span>
+            <nav className="account-auth__nav" aria-label="Acesso e ajuda">
+              <button type="button" className="account-auth__nav-link" onClick={openLoginView}>
+                Iniciar sessão
+              </button>
+              <button
+                type="button"
+                className="account-auth__nav-link"
+                onClick={() => setFeedback({ type: "success", text: "Cadastro em breve no Luma." })}
               >
-                {(() => {
-                  const P = personas[personaIdx].Node;
-                  return <P />;
-                })()}
+                Crie sua conta
+              </button>
+              <button type="button" className="account-auth__nav-link">
+                Perguntas frequentes
+              </button>
+            </nav>
+          </header>
+
+          <main className="account-auth__main">
+            <div className={`account-auth__logo${logoIntroDone ? "" : " account-auth__logo--intro"}`} aria-hidden>
+              <span className="auth-logo-mark__star" />
+            </div>
+            <h2 className="account-auth__title">Conta Luma</h2>
+            <p className="account-auth__sub">Gerencie sua conta Luma e hábitos.</p>
+
+            <form className="account-auth__form" onSubmit={(e) => e.preventDefault()}>
+              <div
+                key={`signin-step-${signinStep}`}
+                className={`auth-step-panel auth-step-panel--slide-${
+                  signinDirection === "forward" ? "right" : "left"
+                }`}
+              >
+                {signinStep === 1 ? (
+                  <label className="auth-field">
+                    <span className="sr-only">E-mail</span>
+                    <input
+                      className="auth-field__input account-auth__input"
+                      type="text"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="E-mail"
+                      required
+                      disabled={busy}
+                    />
+                  </label>
+                ) : (
+                  <label className="auth-field">
+                    <span className="sr-only">Senha</span>
+                    <input
+                      className="auth-field__input account-auth__input"
+                      type="password"
+                      autoComplete="current-password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Senha"
+                      required
+                      minLength={8}
+                      disabled={busy}
+                    />
+                  </label>
+                )}
               </div>
-            </div>
 
-            <div className="icloud-float icloud-float--gear">
-              <IconGear />
-            </div>
-            <div className="icloud-float icloud-float--calendar">
-              <IconCalendar />
-            </div>
-            <div className="icloud-float icloud-float--chart">
-              <IconChart />
-            </div>
-          </div>
+              <p className="account-auth__privacy">
+                As informações da sua Conta Luma são usadas para permitir que você inicie sessão
+                com segurança e acesse seus dados.
+              </p>
 
+              <div className="account-auth__actions">
+                {signinStep === 1 ? (
+                  <button
+                    type="button"
+                    className="auth-submit account-auth__continue"
+                    onClick={handleContinueSignInStep}
+                    disabled={busy}
+                  >
+                    Continuar
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="auth-secondary account-auth__back"
+                      onClick={handleBackToEmailStep}
+                      disabled={busy}
+                    >
+                      Voltar
+                    </button>
+                    <button
+                      type="submit"
+                      className="auth-submit account-auth__continue"
+                      onClick={handleSignIn}
+                      disabled={busy}
+                    >
+                      {busy ? "Aguarde…" : "Entrar"}
+                    </button>
+                  </>
+                )}
+
+              </div>
+
+              {feedback ? (
+                <p
+                  className={`auth-feedback auth-feedback--${feedback.type}`}
+                  role="status"
+                >
+                  {feedback.text}
+                </p>
+              ) : null}
+            </form>
+          </main>
+        </div>
+        ) : (
+        <>
+        <header className="landing-topbar auth-landing__fade" aria-label="Barra superior da landing">
+          <span className="landing-topbar__spacer" aria-hidden />
+          <span className="landing-topbar__mark" aria-hidden>
+            <span className="auth-logo-mark__star" />
+          </span>
+          <button
+            type="button"
+            className="landing-topbar__login"
+            onClick={openLoginView}
+          >
+            Iniciar sessão
+          </button>
+        </header>
+
+        <section
+          className="icloud-hero auth-landing__fade"
+          aria-label="Luma"
+        >
           <h1 className="icloud-brand">Luma</h1>
           <p className="icloud-subtitle">Seu ecossistema de produtividade</p>
 
           <p className="auth-landing__value-line auth-landing__value-line--hero">
             Hoje: 3 tarefas essenciais selecionadas pela IA
           </p>
-
-          <button
-            type="button"
-            className="icloud-login-btn"
-            onClick={() => {
-              setShowForm(true);
-              setMode("signin");
-              setFeedback(null);
-            }}
-          >
-            Iniciar sessão
-          </button>
         </section>
 
-        {showForm ? (
-          <div className="auth-card">
-          <header className="auth-card__head">
-            <h2 className="auth-card__title">
-              {mode === "signin" ? "Entrar" : "Criar conta"}
-            </h2>
-            <p className="auth-card__sub">
-              {mode === "signin"
-                ? "Acesse com seu e-mail e senha."
-                : "Cadastre-se para salvar suas preferências no Luma."}
-            </p>
-          </header>
-
-          <div
-            className="auth-card__modes"
-            role="tablist"
-            aria-label="Modo de acesso"
-          >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signin"}
-            className={`auth-mode${mode === "signin" ? " is-active" : ""}`}
-            onClick={() => {
-              setMode("signin");
-              setFeedback(null);
-            }}
-          >
-            Entrar
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mode === "signup"}
-            className={`auth-mode${mode === "signup" ? " is-active" : ""}`}
-            onClick={() => {
-              setMode("signup");
-              setFeedback(null);
-            }}
-          >
-            Cadastrar
-          </button>
-          </div>
-
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
-          {mode === "signup" ? (
-            <>
-              <label className="auth-field">
-                <span className="auth-field__label">Nome completo</span>
-                <input
-                  className="auth-field__input"
-                  type="text"
-                  autoComplete="name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required={mode === "signup"}
-                  disabled={busy}
-                />
-              </label>
-              <label className="auth-field">
-                <span className="auth-field__label">Data de nascimento</span>
-                <input
-                  className="auth-field__input auth-field__input--date"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  required={mode === "signup"}
-                  disabled={busy}
-                />
-              </label>
-            </>
-          ) : null}
-
-          <label className="auth-field">
-            <span className="auth-field__label">E-mail</span>
-            <input
-              className="auth-field__input"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={busy}
-            />
-          </label>
-          <label className="auth-field">
-            <span className="auth-field__label">Senha</span>
-            <input
-              className="auth-field__input"
-              type="password"
-              autoComplete={
-                mode === "signin" ? "current-password" : "new-password"
-              }
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              disabled={busy}
-            />
-          </label>
-
-          {feedback ? (
-            <p
-              className={`auth-feedback auth-feedback--${feedback.type}`}
-              role="status"
-            >
-              {feedback.text}
-            </p>
-          ) : null}
-
-          <div className="auth-actions">
-            {mode === "signin" ? (
-              <button
-                type="submit"
-                className="auth-submit auth-submit--wide"
-                onClick={handleSignIn}
-                disabled={busy}
-              >
-                {busy ? "Aguarde…" : "Entrar"}
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="auth-submit auth-submit--wide"
-                onClick={handleSignUp}
-                disabled={busy}
-              >
-                {busy ? "Aguarde…" : "Criar conta"}
-              </button>
-            )}
-          </div>
-          </form>
-          </div>
-        ) : null}
-
-        <section className="auth-landing__info" aria-label="Informativos">
+        <section
+          className="auth-landing__info auth-landing__fade"
+          aria-label="Informativos"
+        >
           <div className="icloud-cards" aria-label="Cards informativos">
             <div className="icloud-card">
             <div className="icloud-card__icon" aria-hidden="true">
@@ -549,34 +614,39 @@ export function Auth() {
           </div>
         </section>
 
-        <footer className="auth-landing__footer" aria-label="Templates do Luma">
+        <footer
+          className="auth-landing__footer auth-landing__fade"
+          aria-label="Templates do Luma"
+        >
           <div className="template-row" role="list">
-            <div className="template-item" role="listitem">
+            <button type="button" className="template-item template-item--minimal" role="listitem">
               <span className="template-item__icon" aria-hidden="true">
                 <IconPerson />
               </span>
               <span className="template-item__label">Analista</span>
-            </div>
-            <div className="template-item" role="listitem">
+            </button>
+            <button type="button" className="template-item template-item--minimal" role="listitem">
               <span className="template-item__icon" aria-hidden="true">
                 <IconLaptop />
               </span>
               <span className="template-item__label">Freelancer</span>
-            </div>
-            <div className="template-item" role="listitem">
+            </button>
+            <button type="button" className="template-item template-item--minimal" role="listitem">
               <span className="template-item__icon" aria-hidden="true">
                 <IconBook />
               </span>
               <span className="template-item__label">Estudante</span>
-            </div>
-            <div className="template-item" role="listitem">
+            </button>
+            <button type="button" className="template-item template-item--minimal" role="listitem">
               <span className="template-item__icon" aria-hidden="true">
                 <IconBriefcase />
               </span>
               <span className="template-item__label">Gestora</span>
-            </div>
+            </button>
           </div>
         </footer>
+        </>
+        )}
       </div>
     </div>
   );

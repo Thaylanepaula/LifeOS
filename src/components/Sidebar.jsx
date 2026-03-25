@@ -5,7 +5,11 @@ const NAV = [
   { id: "calendar", label: "Agenda", abbr: "Ag" },
 ];
 
-export function Sidebar({ activeId = "home", onSelect }) {
+export function Sidebar({ activeId = "home", onSelect, enabledNavIds }) {
+  const visibleNav = Array.isArray(enabledNavIds) && enabledNavIds.length > 0
+    ? NAV.filter((item) => enabledNavIds.includes(item.id))
+    : NAV;
+
   return (
     <aside className="sidebar" aria-label="Navegação principal">
       <div className="sidebar__brand">
@@ -58,7 +62,7 @@ export function Sidebar({ activeId = "home", onSelect }) {
 
       <nav className="sidebar__nav" aria-label="Seções">
         <ul>
-          {NAV.map((item) => (
+          {visibleNav.map((item) => (
             <li key={item.id}>
               <button
                 type="button"

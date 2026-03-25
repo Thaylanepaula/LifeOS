@@ -6,13 +6,21 @@ import { HomeView } from "./views/HomeView.jsx";
 import { TodayView } from "./views/TodayView.jsx";
 import { TasksView } from "./views/TasksView.jsx";
 import { CalendarView } from "./views/CalendarView.jsx";
+import { SetupProfileView } from "./views/SetupProfileView.jsx";
 import { useTasks } from "./hooks/useTasks.js";
 import "./App.css";
+
+const PROFILE_MODULES = {
+  Analista: ["home", "today", "tasks", "calendar"],
+  Freelancer: ["home", "tasks", "calendar"],
+  Gestora: ["home", "today", "calendar"],
+};
 
 function App() {
   const [nav, setNav] = useState("home");
   const [session, setSession] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [setupBusy, setSetupBusy] = useState(false);
 
   const { tasks, addTask, toggleTask } = useTasks();
 
@@ -71,10 +79,66 @@ function App() {
 
   const email = session.user?.email ?? "";
   const rawName = session.user?.user_metadata?.full_name;
+  const profile = session.user?.user_metadata?.template_profile;
+  const activeModules = session.user?.user_metadata?.active_modules;
   const welcomeName =
     typeof rawName === "string" && rawName.trim() !== ""
       ? rawName.trim()
       : "Usuária";
+  const enabledNavIds = Array.isArray(activeModules) && activeModules.length > 0
+    ? activeModules
+    : PROFILE_MODULES[profile] ?? ["home", "today", "tasks", "calendar"];
+  const needsSetup = !profile;
+
+  async function handleSetupProfileSelection(selectedProfile) {
+    if (!selectedProfile?.id || !Array.isArray(selectedProfile?.modules)) return;
+
+    setSetupBusy(true);
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        data: {
+          template_profile: selectedProfile.id,
+          active_modules: selectedProfile.modules,
+        },
+      });
+
+      if (error) return;
+
+      if (data?.user) {
+        setSession((prev) => {
+          if (!prev) return prev;
+          return { ...prev, user: data.user };
+        });
+      }
+      setNav("home");
+    } finally {
+      setSetupBusy(false);
+    }
+  }
+
+  if (needsSetup) {
+    return (
+      <div className="app-shell-logged">
+        <header className="auth-bar">
+          <span className="auth-bar__email">{email}</span>
+          <button
+            type="button"
+            className="auth-bar__out"
+            onClick={() => supabase.auth.signOut()}
+          >
+            Sair
+          </button>
+        </header>
+
+        <main className="setup-main">
+          <SetupProfileView
+            busy={setupBusy}
+            onSelectProfile={handleSetupProfileSelection}
+          />
+        </main>
+      </div>
+    );
+  }
 
   const mainContent = (() => {
     switch (nav) {
@@ -113,7 +177,7 @@ function App() {
       </header>
 
       <div className="app-root">
-        <Sidebar activeId={nav} onSelect={setNav} />
+        <Sidebar activeId={nav} onSelect={setNav} enabledNavIds={enabledNavIds} />
         <main className="app-root__main">{mainContent}</main>
       </div>
     </div>
