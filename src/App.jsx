@@ -50,12 +50,6 @@ function App() {
     );
   }, [tasks]);
 
-  const focusTasks = useMemo(() => {
-    const high = tasks.filter((t) => !t.done && t.priority === "alta");
-    if (high.length) return high.slice(0, 6);
-    return tasks.filter((t) => !t.done).slice(0, 4);
-  }, [tasks]);
-
   const welcomeDate = new Date().toLocaleDateString("pt-BR", {
     weekday: "long",
     day: "numeric",
@@ -90,8 +84,6 @@ function App() {
             welcomeName={welcomeName}
             welcomeDate={welcomeDate}
             stats={stats}
-            focusTasks={focusTasks}
-            onToggle={toggleTask}
           />
         );
       case "today":

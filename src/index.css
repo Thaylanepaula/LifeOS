@@ -1,12 +1,12 @@
 :root {
-  --bg: #080a0e;
+  --bg: #000000;
   --bg-elevated: #0f1319;
-  --bg-card: #121826;
+  --bg-card: #1c1c1e;
   --border: rgba(255, 255, 255, 0.07);
   --border-strong: rgba(255, 255, 255, 0.12);
   --text: #e8eaef;
-  --text-muted: #8b93a5;
-  --text-faint: #5c6578;
+  --text-muted: #86868b;
+  --text-faint: #86868b;
   --accent: #3ee0b9;
   --accent-dim: #2bb89a;
   --accent-soft: rgba(62, 224, 185, 0.12);
@@ -38,6 +38,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: #000000;
 }
 
 #root {

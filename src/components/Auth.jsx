@@ -1,7 +1,255 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient.js";
 
+function IconGear() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M19.4 15a8.7 8.7 0 0 0 .1-1l1.7-1.3-1.8-3.1-2 .7a8.8 8.8 0 0 0-1.7-1l-.3-2.1H10.6l-.3 2.1a8.8 8.8 0 0 0-1.7 1l-2-.7-1.8 3.1L5.5 14a8.7 8.7 0 0 0 .1 1l-1.7 1.3 1.8 3.1 2-.7c.5.4 1.1.7 1.7 1l.3 2.1h4.8l.3-2.1c.6-.3 1.2-.6 1.7-1l2 .7 1.8-3.1L19.4 15Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconCalendar() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M7 3v3M17 3v3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4.5 9.2h15"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.5 6h11c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2h-11c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2Z"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <path
+        d="M8 13h3M8 16h6"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconChart() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M4.8 19.2V4.8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M4.8 19.2H19.2"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 15l3-4 3 2 3-6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="8" cy="15" r="1" fill="currentColor" />
+      <circle cx="11" cy="11" r="1" fill="currentColor" />
+      <circle cx="14" cy="13" r="1" fill="currentColor" />
+      <circle cx="17" cy="7" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function IconBolt() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M13 2L4 14h7l-1 8 10-14h-7l0-6Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconBattery() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M3.8 9.2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5.6a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2V9.2Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M21.2 10.2v3.6"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconPerson() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 12.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M4.6 20.2c1.7-3.4 4.3-5.2 7.4-5.2s5.7 1.8 7.4 5.2"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconLaptop() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M6.2 7.2h11.6c.9 0 1.6.7 1.6 1.6v6.6H4.6V8.8c0-.9.7-1.6 1.6-1.6Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3.8 17.2h16.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconBook() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M6.6 4.8h9.6c1.3 0 2.4 1.1 2.4 2.4v12.2c0 .9-.7 1.6-1.6 1.6H6.6c-1.3 0-2.4-1.1-2.4-2.4V7.2c0-1.3 1.1-2.4 2.4-2.4Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7.6 8.3h7.4M7.6 11.2h7.4"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function IconBriefcase() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M8.2 7.8V6.6c0-1 .8-1.8 1.8-1.8h4c1 0 1.8.8 1.8 1.8v1.2"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.2 7.8h11.6c1.1 0 2 .9 2 2v8.2c0 1.1-.9 2-2 2H6.2c-1.1 0-2-.9-2-2V9.8c0-1.1.9-2 2-2Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.6 12.3h4.8"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function PersonaAnalista() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M4 18V6c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v8.2c0 1.1-.9 2-2 2H9.8L7 20.5c-.4.3-1 .1-1.1-.4L5.4 18H6"
+        fill="currentColor"
+        opacity="0.95"
+      />
+      <path
+        d="M7.2 15.2c1.8-2.4 3.6-3.6 5.4-3.6 1.4 0 2.6.7 3.8 2.1l2-2.8c.3-.4.8-.5 1.2-.3.4.3.5.8.3 1.2l-2.6 3.6c-.3.4-.9.5-1.3.2-1.1-1-2.1-1.6-3.4-1.6-1.4 0-2.8.9-4.3 2.8-.3.4-.9.4-1.2.1-.4-.3-.4-.9-.1-1.2Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function PersonaFreelancer() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M6.6 20.6c-.3 0-.6-.1-.8-.3-.4-.4-.4-1 0-1.4l9.8-9.8c.4-.4 1-.4 1.4 0l1.6 1.6c.4.4.4 1 0 1.4l-9.8 9.8c-.2.2-.5.3-.8.3H6.6Z"
+        fill="currentColor"
+      />
+      <path
+        d="M6 21v-3.6c0-.3.1-.5.3-.7l9.6-9.6c.4-.4 1-.4 1.4 0l1.9 1.9c.4.4.4 1 0 1.4l-9.6 9.6c-.2.2-.4.3-.7.3H6Z"
+        fill="currentColor"
+        opacity="0.55"
+      />
+      <path
+        d="M15.8 6.6l1.6-1.6c.4-.4 1-.4 1.4 0l1.2 1.2c.4.4.4 1 0 1.4l-1.6 1.6-2.6-2.6Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function PersonaGestora() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M4.8 20.2c-.6 0-1-.4-1-1v-7.6c0-.3.1-.6.3-.8L12 4.2l7.9 6.6c.2.2.3.5.3.8v7.6c0 .6-.4 1-1 1h-4.8c-.6 0-1-.4-1-1v-4.2h-2.8v4.2c0 .6-.4 1-1 1H4.8Z"
+        fill="currentColor"
+      />
+      <path
+        d="M9.8 9.8h4.4c.6 0 1 .4 1 1v2.2c0 .6-.4 1-1 1H9.8c-.6 0-1-.4-1-1v-2.2c0-.6.4-1 1-1Z"
+        fill="currentColor"
+        opacity="0.55"
+      />
+    </svg>
+  );
+}
+
 export function Auth() {
+  const [showForm, setShowForm] = useState(false);
   const [mode, setMode] = useState("signin");
   const [fullName, setFullName] = useState("");
   const [birthDate, setBirthDate] = useState("");
@@ -9,6 +257,25 @@ export function Auth() {
   const [password, setPassword] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [busy, setBusy] = useState(false);
+
+  const h = new Date().getHours();
+  const base = h < 12 ? 78 : h < 18 ? 62 : 45;
+  const disposição = clamp(base, 0, 100);
+  const energiaLabel = disposição >= 60 ? "Tarefas Complexas" : "Microtarefas";
+
+  const personas = [
+    { id: "analista", label: "Analista", Node: PersonaAnalista },
+    { id: "freelancer", label: "Freelancer", Node: PersonaFreelancer },
+    { id: "gestora", label: "Gestora", Node: PersonaGestora },
+  ];
+  const [personaIdx, setPersonaIdx] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setPersonaIdx((i) => (i + 1) % personas.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, []);
 
   async function handleSignIn(e) {
     e.preventDefault();
@@ -55,20 +322,75 @@ export function Auth() {
   }
 
   return (
-    <div className="auth-screen">
-      <div className="auth-card">
-        <header className="auth-card__head">
-          <h1 className="auth-card__title">
-            {mode === "signin" ? "Entrar no LifeOS" : "Criar conta"}
-          </h1>
-          <p className="auth-card__sub">
-            {mode === "signin"
-              ? "E-mail e senha (mín. 6 caracteres)."
-              : "Preencha nome, data de nascimento, e-mail e senha."}
-          </p>
-        </header>
+    <div className="auth-screen auth-screen--landing">
+      <div className="auth-landing">
+        <section className="icloud-hero" aria-label="Luma">
+          <div
+            className="icloud-avatar-wrap"
+            data-persona={personas[personaIdx].id}
+          >
+            <div className="icloud-avatar" aria-hidden="true">
+              <div
+                key={personas[personaIdx].id}
+                className="icloud-avatar__persona"
+                aria-label={personas[personaIdx].label}
+              >
+                {(() => {
+                  const P = personas[personaIdx].Node;
+                  return <P />;
+                })()}
+              </div>
+            </div>
 
-        <div className="auth-card__modes" role="tablist" aria-label="Modo de acesso">
+            <div className="icloud-float icloud-float--gear">
+              <IconGear />
+            </div>
+            <div className="icloud-float icloud-float--calendar">
+              <IconCalendar />
+            </div>
+            <div className="icloud-float icloud-float--chart">
+              <IconChart />
+            </div>
+          </div>
+
+          <h1 className="icloud-brand">Luma</h1>
+          <p className="icloud-subtitle">Seu ecossistema de produtividade</p>
+
+          <p className="auth-landing__value-line auth-landing__value-line--hero">
+            Hoje: 3 tarefas essenciais selecionadas pela IA
+          </p>
+
+          <button
+            type="button"
+            className="icloud-login-btn"
+            onClick={() => {
+              setShowForm(true);
+              setMode("signin");
+              setFeedback(null);
+            }}
+          >
+            Iniciar sessão
+          </button>
+        </section>
+
+        {showForm ? (
+          <div className="auth-card">
+          <header className="auth-card__head">
+            <h2 className="auth-card__title">
+              {mode === "signin" ? "Entrar" : "Criar conta"}
+            </h2>
+            <p className="auth-card__sub">
+              {mode === "signin"
+                ? "Acesse com seu e-mail e senha."
+                : "Cadastre-se para salvar suas preferências no Luma."}
+            </p>
+          </header>
+
+          <div
+            className="auth-card__modes"
+            role="tablist"
+            aria-label="Modo de acesso"
+          >
           <button
             type="button"
             role="tab"
@@ -93,9 +415,9 @@ export function Auth() {
           >
             Cadastrar
           </button>
-        </div>
+          </div>
 
-        <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
           {mode === "signup" ? (
             <>
               <label className="auth-field">
@@ -182,7 +504,79 @@ export function Auth() {
               </button>
             )}
           </div>
-        </form>
+          </form>
+          </div>
+        ) : null}
+
+        <section className="auth-landing__info" aria-label="Informativos">
+          <div className="icloud-cards" aria-label="Cards informativos">
+            <div className="icloud-card">
+            <div className="icloud-card__icon" aria-hidden="true">
+              <IconBolt />
+            </div>
+            <h2 className="icloud-card__title">
+              Sua Performance — Curador de Prioridades
+            </h2>
+            <p className="icloud-card__desc">
+              Visualize seu nível de energia e produtividade. O Luma ajuda você a
+              decidir o que fazer agora para evitar a paralisia de decisão
+            </p>
+            </div>
+
+            <div className="icloud-card">
+            <div className="icloud-card__icon" aria-hidden="true">
+              <IconBattery />
+            </div>
+            <h2 className="icloud-card__title">Bateria de Energia</h2>
+            <div className="energy-meter" role="group" aria-label="Bateria de energia">
+              <div className="energy-meter__bar" aria-hidden="true">
+                <div
+                  className="energy-meter__fill"
+                  style={{ width: `${disposição}%` }}
+                />
+              </div>
+              <div className="energy-meter__row">
+                <span className="energy-meter__value">{disposição}%</span>
+                <span className="energy-meter__pill">{energiaLabel}</span>
+              </div>
+              <p className="energy-meter__hint">
+                {energiaLabel === "Tarefas Complexas"
+                  ? "Aproveite o pico de foco para decisões e tarefas profundas."
+                  : "Hoje é melhor avançar com passos pequenos e consistentes."}
+              </p>
+            </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="auth-landing__footer" aria-label="Templates do Luma">
+          <div className="template-row" role="list">
+            <div className="template-item" role="listitem">
+              <span className="template-item__icon" aria-hidden="true">
+                <IconPerson />
+              </span>
+              <span className="template-item__label">Analista</span>
+            </div>
+            <div className="template-item" role="listitem">
+              <span className="template-item__icon" aria-hidden="true">
+                <IconLaptop />
+              </span>
+              <span className="template-item__label">Freelancer</span>
+            </div>
+            <div className="template-item" role="listitem">
+              <span className="template-item__icon" aria-hidden="true">
+                <IconBook />
+              </span>
+              <span className="template-item__label">Estudante</span>
+            </div>
+            <div className="template-item" role="listitem">
+              <span className="template-item__icon" aria-hidden="true">
+                <IconBriefcase />
+              </span>
+              <span className="template-item__label">Gestora</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
