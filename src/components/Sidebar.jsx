@@ -13,49 +13,15 @@ export function Sidebar({ activeId = "home", onSelect, enabledNavIds }) {
   return (
     <aside className="sidebar" aria-label="Navegação principal">
       <div className="sidebar__brand">
-        <span className="sidebar__logo" aria-hidden>
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle
-              cx="12"
-              cy="12"
-              r="4.2"
-              stroke="#0071e3"
-              strokeWidth="1.8"
-            />
-            <path
-              d="M12 2.8V6.2"
-              stroke="#0071e3"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-            <path
-              d="M12 17.8V21.2"
-              stroke="#0071e3"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-            <path
-              d="M2.8 12H6.2"
-              stroke="#0071e3"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-            <path
-              d="M17.8 12H21.2"
-              stroke="#0071e3"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            />
-          </svg>
-        </span>
+        <span className="sidebar__gem" aria-hidden />
         <div className="sidebar__brand-text">
-          <span className="sidebar__title">Luma</span>
+          <button
+            type="button"
+            className="sidebar__title sidebar__title--link"
+            onClick={() => onSelect?.("home")}
+          >
+            Luma
+          </button>
           <span className="sidebar__tagline">seu painel</span>
         </div>
       </div>

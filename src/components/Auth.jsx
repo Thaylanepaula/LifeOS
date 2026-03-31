@@ -1,83 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient.js";
-
-function IconGear() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path
-        d="M19.4 15a8.7 8.7 0 0 0 .1-1l1.7-1.3-1.8-3.1-2 .7a8.8 8.8 0 0 0-1.7-1l-.3-2.1H10.6l-.3 2.1a8.8 8.8 0 0 0-1.7 1l-2-.7-1.8 3.1L5.5 14a8.7 8.7 0 0 0 .1 1l-1.7 1.3 1.8 3.1 2-.7c.5.4 1.1.7 1.7 1l.3 2.1h4.8l.3-2.1c.6-.3 1.2-.6 1.7-1l2 .7 1.8-3.1L19.4 15Z"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function IconCalendar() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M7 3v3M17 3v3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M4.5 9.2h15"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M6.5 6h11c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2h-11c-1.1 0-2-.9-2-2V8c0-1.1.9-2 2-2Z"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      />
-      <path
-        d="M8 13h3M8 16h6"
-        stroke="currentColor"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconChart() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4.8 19.2V4.8"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M4.8 19.2H19.2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M8 15l3-4 3 2 3-6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="8" cy="15" r="1" fill="currentColor" />
-      <circle cx="11" cy="11" r="1" fill="currentColor" />
-      <circle cx="14" cy="13" r="1" fill="currentColor" />
-      <circle cx="17" cy="7" r="1" fill="currentColor" />
-    </svg>
-  );
-}
 
 function IconBolt() {
   return (
@@ -111,144 +34,45 @@ function IconBattery() {
   );
 }
 
-function IconPerson() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 12.2a4.2 4.2 0 1 0 0-8.4 4.2 4.2 0 0 0 0 8.4Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M4.6 20.2c1.7-3.4 4.3-5.2 7.4-5.2s5.7 1.8 7.4 5.2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconLaptop() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M6.2 7.2h11.6c.9 0 1.6.7 1.6 1.6v6.6H4.6V8.8c0-.9.7-1.6 1.6-1.6Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M3.8 17.2h16.4"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconBook() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M6.6 4.8h9.6c1.3 0 2.4 1.1 2.4 2.4v12.2c0 .9-.7 1.6-1.6 1.6H6.6c-1.3 0-2.4-1.1-2.4-2.4V7.2c0-1.3 1.1-2.4 2.4-2.4Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M7.6 8.3h7.4M7.6 11.2h7.4"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function IconBriefcase() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M8.2 7.8V6.6c0-1 .8-1.8 1.8-1.8h4c1 0 1.8.8 1.8 1.8v1.2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M6.2 7.8h11.6c1.1 0 2 .9 2 2v8.2c0 1.1-.9 2-2 2H6.2c-1.1 0-2-.9-2-2V9.8c0-1.1.9-2 2-2Z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9.6 12.3h4.8"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
-function PersonaAnalista() {
+function IconGoogle() {
   return (
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
       <path
-        d="M4 18V6c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v8.2c0 1.1-.9 2-2 2H9.8L7 20.5c-.4.3-1 .1-1.1-.4L5.4 18H6"
-        fill="currentColor"
-        opacity="0.95"
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
       />
       <path
-        d="M7.2 15.2c1.8-2.4 3.6-3.6 5.4-3.6 1.4 0 2.6.7 3.8 2.1l2-2.8c.3-.4.8-.5 1.2-.3.4.3.5.8.3 1.2l-2.6 3.6c-.3.4-.9.5-1.3.2-1.1-1-2.1-1.6-3.4-1.6-1.4 0-2.8.9-4.3 2.8-.3.4-.9.4-1.2.1-.4-.3-.4-.9-.1-1.2Z"
-        fill="currentColor"
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
   );
 }
 
-function PersonaFreelancer() {
-  return (
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M6.6 20.6c-.3 0-.6-.1-.8-.3-.4-.4-.4-1 0-1.4l9.8-9.8c.4-.4 1-.4 1.4 0l1.6 1.6c.4.4.4 1 0 1.4l-9.8 9.8c-.2.2-.5.3-.8.3H6.6Z"
-        fill="currentColor"
-      />
-      <path
-        d="M6 21v-3.6c0-.3.1-.5.3-.7l9.6-9.6c.4-.4 1-.4 1.4 0l1.9 1.9c.4.4.4 1 0 1.4l-9.6 9.6c-.2.2-.4.3-.7.3H6Z"
-        fill="currentColor"
-        opacity="0.55"
-      />
-      <path
-        d="M15.8 6.6l1.6-1.6c.4-.4 1-.4 1.4 0l1.2 1.2c.4.4.4 1 0 1.4l-1.6 1.6-2.6-2.6Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
+const AUTH_HASHES = new Set(["#login", "#signup"]);
 
-function PersonaGestora() {
-  return (
-    <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M4.8 20.2c-.6 0-1-.4-1-1v-7.6c0-.3.1-.6.3-.8L12 4.2l7.9 6.6c.2.2.3.5.3.8v7.6c0 .6-.4 1-1 1h-4.8c-.6 0-1-.4-1-1v-4.2h-2.8v4.2c0 .6-.4 1-1 1H4.8Z"
-        fill="currentColor"
-      />
-      <path
-        d="M9.8 9.8h4.4c.6 0 1 .4 1 1v2.2c0 .6-.4 1-1 1H9.8c-.6 0-1-.4-1-1v-2.2c0-.6.4-1 1-1Z"
-        fill="currentColor"
-        opacity="0.55"
-      />
-    </svg>
-  );
+/** Definição interna de módulos ao criar conta (sem escolha na UI). */
+const DEFAULT_ACTIVE_MODULES = ["home", "today", "tasks", "calendar"];
+const INTERNAL_DEFAULT_TEMPLATE = "Analista";
+
+function authRedirectUrl() {
+  return `${window.location.origin}/dashboard`;
 }
 
 export function Auth() {
+  const navigate = useNavigate();
   const [isAuthView, setIsAuthView] = useState(false);
   const [logoIntroDone, setLogoIntroDone] = useState(false);
   const [mode, setMode] = useState("signin");
@@ -259,9 +83,6 @@ export function Auth() {
   const [password, setPassword] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [signupStep, setSignupStep] = useState(1);
-  const [selectedProfile, setSelectedProfile] = useState("Analista");
-  const [emailTouched, setEmailTouched] = useState(false);
 
   const h = new Date().getHours();
   const base = h < 12 ? 78 : h < 18 ? 62 : 45;
@@ -272,20 +93,6 @@ export function Auth() {
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
   const isPasswordStrong = hasMinLen && hasSymbol;
 
-  const personas = [
-    { id: "analista", label: "Analista", Node: PersonaAnalista },
-    { id: "freelancer", label: "Freelancer", Node: PersonaFreelancer },
-    { id: "gestora", label: "Gestora", Node: PersonaGestora },
-  ];
-  const [personaIdx, setPersonaIdx] = useState(0);
-
-  useEffect(() => {
-    const t = setInterval(() => {
-      setPersonaIdx((i) => (i + 1) % personas.length);
-    }, 5000);
-    return () => clearInterval(t);
-  }, []);
-
   useEffect(() => {
     if (!isAuthView || logoIntroDone) return;
     const t = setTimeout(() => setLogoIntroDone(true), 1600);
@@ -294,7 +101,13 @@ export function Auth() {
 
   useEffect(() => {
     function syncAuthViewWithHash() {
-      setIsAuthView(window.location.hash === "#login");
+      const hash = window.location.hash;
+      if (AUTH_HASHES.has(hash)) {
+        setIsAuthView(true);
+        setMode(hash === "#signup" ? "signup" : "signin");
+      } else {
+        setIsAuthView(false);
+      }
     }
 
     syncAuthViewWithHash();
@@ -319,14 +132,27 @@ export function Auth() {
     setFeedback(null);
   }
 
+  function openSignupView() {
+    if (window.location.hash !== "#signup") {
+      window.location.hash = "signup";
+    } else {
+      setIsAuthView(true);
+    }
+    setMode("signup");
+    setSigninStep(1);
+    setSigninDirection("forward");
+    setFeedback(null);
+  }
+
   function closeLoginView() {
     const cleanUrl = `${window.location.pathname}${window.location.search}`;
-    if (window.location.hash === "#login") {
+    if (AUTH_HASHES.has(window.location.hash)) {
       window.history.pushState(null, "", cleanUrl);
       setIsAuthView(false);
     } else {
       setIsAuthView(false);
     }
+    setMode("signin");
     setSigninStep(1);
     setSigninDirection("forward");
     setFeedback(null);
@@ -341,7 +167,11 @@ export function Auth() {
         email: email.trim(),
         password,
       });
-      if (error) setFeedback({ type: "error", text: error.message });
+      if (error) {
+        setFeedback({ type: "error", text: error.message });
+      } else {
+        navigate("/dashboard", { replace: true });
+      }
     } finally {
       setBusy(false);
     }
@@ -358,7 +188,10 @@ export function Auth() {
     setFeedback(null);
     setBusy(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        { redirectTo: authRedirectUrl() }
+      );
       if (error) {
         setFeedback({ type: "error", text: error.message });
       } else {
@@ -367,6 +200,23 @@ export function Auth() {
           text: "Enviamos um link de recuperacao de senha para seu e-mail.",
         });
       }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleGoogleSignIn() {
+    setFeedback(null);
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: authRedirectUrl(),
+          queryParams: { prompt: "select_account" },
+        },
+      });
+      if (error) setFeedback({ type: "error", text: error.message });
     } finally {
       setBusy(false);
     }
@@ -394,6 +244,21 @@ export function Auth() {
   async function handleSignUp(e) {
     e.preventDefault();
     setFeedback(null);
+    if (!fullName.trim()) {
+      setFeedback({ type: "error", text: "Informe seu nome completo." });
+      return;
+    }
+    if (!isEmailValid) {
+      setFeedback({ type: "error", text: "Digite um e-mail válido." });
+      return;
+    }
+    if (!isPasswordStrong) {
+      setFeedback({
+        type: "error",
+        text: "A senha precisa de pelo menos 8 caracteres e um símbolo.",
+      });
+      return;
+    }
     setBusy(true);
     try {
       const nome = fullName.trim();
@@ -403,7 +268,8 @@ export function Auth() {
         options: {
           data: {
             full_name: nome,
-            template_profile: selectedProfile,
+            template_profile: INTERNAL_DEFAULT_TEMPLATE,
+            active_modules: DEFAULT_ACTIVE_MODULES,
           },
         },
       });
@@ -429,15 +295,32 @@ export function Auth() {
         {isAuthView ? (
         <div className="account-auth">
           <header className="account-auth__header">
-            <span className="account-auth__brand">Luma</span>
+            <Link
+              to="/"
+              className="account-auth__brand account-auth__brand--link"
+              onClick={(e) => {
+                e.preventDefault();
+                closeLoginView();
+              }}
+            >
+              Luma
+            </Link>
             <nav className="account-auth__nav" aria-label="Acesso e ajuda">
-              <button type="button" className="account-auth__nav-link" onClick={openLoginView}>
+              <button
+                type="button"
+                className={`account-auth__nav-link${
+                  mode === "signin" ? " account-auth__nav-link--active" : ""
+                }`}
+                onClick={openLoginView}
+              >
                 Iniciar sessão
               </button>
               <button
                 type="button"
-                className="account-auth__nav-link"
-                onClick={() => setFeedback({ type: "success", text: "Cadastro em breve no Luma." })}
+                className={`account-auth__nav-link${
+                  mode === "signup" ? " account-auth__nav-link--active" : ""
+                }`}
+                onClick={openSignupView}
               >
                 Crie sua conta
               </button>
@@ -448,12 +331,27 @@ export function Auth() {
           </header>
 
           <main className="account-auth__main">
+            <button
+              type="button"
+              className="account-auth__close"
+              aria-label="Fechar login"
+              onClick={closeLoginView}
+            >
+              ×
+            </button>
             <div className={`account-auth__logo${logoIntroDone ? "" : " account-auth__logo--intro"}`} aria-hidden>
               <span className="auth-logo-mark__star" />
             </div>
-            <h2 className="account-auth__title">Conta Luma</h2>
-            <p className="account-auth__sub">Gerencie sua conta Luma e hábitos.</p>
+            <h2 className="account-auth__title">
+              {mode === "signup" ? "Crie sua conta" : "Conta Luma"}
+            </h2>
+            <p className="account-auth__sub">
+              {mode === "signup"
+                ? "Preencha os dados para criar sua Conta Luma."
+                : "Gerencie sua conta Luma e hábitos."}
+            </p>
 
+            {mode === "signin" ? (
             <form className="account-auth__form" onSubmit={(e) => e.preventDefault()}>
               <div
                 key={`signin-step-${signinStep}`}
@@ -493,6 +391,19 @@ export function Auth() {
                 )}
               </div>
 
+              {signinStep === 1 ? (
+                <div className="account-auth__forgot-row">
+                  <button
+                    type="button"
+                    className="account-auth__forgot"
+                    onClick={handleForgotPassword}
+                    disabled={busy}
+                  >
+                    Esqueceu a senha?
+                  </button>
+                </div>
+              ) : null}
+
               <p className="account-auth__privacy">
                 As informações da sua Conta Luma são usadas para permitir que você inicie sessão
                 com segurança e acesse seus dados.
@@ -528,7 +439,104 @@ export function Auth() {
                     </button>
                   </>
                 )}
+              </div>
 
+              {signinStep === 1 ? (
+                <>
+                  <p className="account-auth__oauth-divider" aria-hidden>
+                    ou
+                  </p>
+                  <button
+                    type="button"
+                    className="account-auth__google"
+                    onClick={handleGoogleSignIn}
+                    disabled={busy}
+                  >
+                    <IconGoogle />
+                    Continuar com Google
+                  </button>
+                </>
+              ) : null}
+
+              {feedback ? (
+                <p
+                  className={`auth-feedback auth-feedback--${feedback.type}`}
+                  role="status"
+                >
+                  {feedback.text}
+                </p>
+              ) : null}
+            </form>
+            ) : (
+            <form className="account-auth__form" onSubmit={handleSignUp}>
+              <div className="account-auth__field-stack">
+                <label className="auth-field">
+                  <span className="sr-only">Nome completo</span>
+                  <input
+                    className="auth-field__input account-auth__input"
+                    type="text"
+                    autoComplete="name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Nome completo"
+                    required
+                    disabled={busy}
+                  />
+                </label>
+                <label className="auth-field">
+                  <span className="sr-only">E-mail</span>
+                  <input
+                    className="auth-field__input account-auth__input"
+                    type="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="E-mail"
+                    required
+                    disabled={busy}
+                  />
+                </label>
+                <label className="auth-field">
+                  <span className="sr-only">Senha</span>
+                  <input
+                    className="auth-field__input account-auth__input"
+                    type="password"
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Senha (mín. 8 caracteres e um símbolo)"
+                    required
+                    minLength={8}
+                    disabled={busy}
+                  />
+                </label>
+              </div>
+
+              <p className="account-auth__privacy">
+                Ao criar uma conta, você concorda com o uso dos seus dados conforme necessário
+                para autenticação e personalização do Luma.
+              </p>
+
+              <div className="account-auth__actions account-auth__actions--stack">
+                <button
+                  type="submit"
+                  className="auth-submit account-auth__continue account-auth__continue--wide"
+                  disabled={busy}
+                >
+                  {busy ? "Aguarde…" : "Criar conta"}
+                </button>
+                <p className="account-auth__oauth-divider" aria-hidden>
+                  ou
+                </p>
+                <button
+                  type="button"
+                  className="account-auth__google"
+                  onClick={handleGoogleSignIn}
+                  disabled={busy}
+                >
+                  <IconGoogle />
+                  Continuar com Google
+                </button>
               </div>
 
               {feedback ? (
@@ -540,6 +548,7 @@ export function Auth() {
                 </p>
               ) : null}
             </form>
+            )}
           </main>
         </div>
         ) : (
@@ -549,13 +558,22 @@ export function Auth() {
           <span className="landing-topbar__mark" aria-hidden>
             <span className="auth-logo-mark__star" />
           </span>
-          <button
-            type="button"
-            className="landing-topbar__login"
-            onClick={openLoginView}
-          >
-            Iniciar sessão
-          </button>
+          <div className="landing-topbar__actions">
+            <button
+              type="button"
+              className="landing-topbar__link"
+              onClick={openSignupView}
+            >
+              Crie sua conta
+            </button>
+            <button
+              type="button"
+              className="landing-topbar__login"
+              onClick={openLoginView}
+            >
+              Iniciar sessão
+            </button>
+          </div>
         </header>
 
         <section
@@ -613,38 +631,6 @@ export function Auth() {
             </div>
           </div>
         </section>
-
-        <footer
-          className="auth-landing__footer auth-landing__fade"
-          aria-label="Templates do Luma"
-        >
-          <div className="template-row" role="list">
-            <button type="button" className="template-item template-item--minimal" role="listitem">
-              <span className="template-item__icon" aria-hidden="true">
-                <IconPerson />
-              </span>
-              <span className="template-item__label">Analista</span>
-            </button>
-            <button type="button" className="template-item template-item--minimal" role="listitem">
-              <span className="template-item__icon" aria-hidden="true">
-                <IconLaptop />
-              </span>
-              <span className="template-item__label">Freelancer</span>
-            </button>
-            <button type="button" className="template-item template-item--minimal" role="listitem">
-              <span className="template-item__icon" aria-hidden="true">
-                <IconBook />
-              </span>
-              <span className="template-item__label">Estudante</span>
-            </button>
-            <button type="button" className="template-item template-item--minimal" role="listitem">
-              <span className="template-item__icon" aria-hidden="true">
-                <IconBriefcase />
-              </span>
-              <span className="template-item__label">Gestora</span>
-            </button>
-          </div>
-        </footer>
         </>
         )}
       </div>
