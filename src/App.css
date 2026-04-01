@@ -1018,6 +1018,64 @@
   white-space: nowrap;
 }
 
+.auth-bar__profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auth-bar__name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text);
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-bar__avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.auth-bar__avatar--fallback {
+  display: inline-grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.auth-bar__energy {
+  min-width: 130px;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.auth-bar__energy-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.auth-bar__energy-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9af7dd, #c3a8f5);
+}
+
+.auth-bar__energy-value {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .auth-bar__out {
   padding: 0.4rem 0.85rem;
   border-radius: 10px;

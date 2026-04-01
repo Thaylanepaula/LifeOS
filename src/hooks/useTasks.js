@@ -1,97 +1,96 @@
 import { useCallback, useEffect, useState } from "react";
+import { supabase } from "../lib/supabaseClient.js";
 
-const STORAGE_KEY = "lifeos.tasks.v1";
-
-const DEFAULT_TASKS = [
-  {
-    id: "1",
-    title: "Revisar metas da semana",
-    dueLabel: "Hoje · 18:00",
-    dueDate: "today",
-    priority: "alta",
-    done: false,
-  },
-  {
-    id: "2",
-    title: "Treino leve (30 min)",
-    dueLabel: "Hoje",
-    dueDate: "today",
+function mapTask(task) {
+  return {
+    id: task.id,
+    title: task.title ?? "",
+    dueLabel: "",
+    dueDate: null,
     priority: "media",
-    done: false,
-  },
-  {
-    id: "3",
-    title: "Responder e-mails pendentes",
-    dueLabel: "Amanhã",
-    dueDate: "tomorrow",
-    priority: "baixa",
-    done: true,
-  },
-];
-
-function normalizeTasks(list) {
-  return list.map((t) => ({
-    ...t,
-    dueLabel: t.dueLabel ?? t.due ?? "",
-    dueDate: t.dueDate ?? null,
-  }));
+    done: Boolean(task.is_done),
+  };
 }
 
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_TASKS;
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULT_TASKS;
-    return normalizeTasks(parsed);
-  } catch {
-    return DEFAULT_TASKS;
-  }
-}
-
-function save(tasks) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  } catch {
-    /* ignore */
-  }
-}
-
-export function useTasks() {
-  const [tasks, setTasks] = useState(load);
+export function useTasks(userId) {
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    save(tasks);
-  }, [tasks]);
+    let active = true;
 
-  const addTask = useCallback((title, opts = {}) => {
-    const trimmed = title.trim();
-    if (!trimmed) return;
-    const id =
-      typeof crypto !== "undefined" && crypto.randomUUID
-        ? crypto.randomUUID()
-        : String(Date.now());
-    setTasks((prev) => [
-      {
-        id,
+    async function loadTasks() {
+      if (!userId) {
+        if (active) setTasks([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("id, user_id, title, is_done")
+        .eq("user_id", userId)
+        .order("id", { ascending: false });
+
+      if (!active) return;
+      if (error || !Array.isArray(data)) {
+        setTasks([]);
+        return;
+      }
+
+      setTasks(data.map(mapTask));
+    }
+
+    loadTasks();
+
+    return () => {
+      active = false;
+    };
+  }, [userId]);
+
+  const addTask = useCallback(
+    async (title) => {
+      const trimmed = title.trim();
+      if (!trimmed || !userId) return;
+
+      const payload = {
+        user_id: userId,
         title: trimmed,
-        dueLabel: opts.dueLabel ?? "Sem data",
-        dueDate: opts.dueDate ?? null,
-        priority: opts.priority ?? "media",
-        done: false,
-      },
-      ...prev,
-    ]);
-  }, []);
+        is_done: false,
+      };
 
-  const toggleTask = useCallback((id) => {
+      const { data, error } = await supabase
+        .from("tasks")
+        .insert(payload)
+        .select("id, user_id, title, is_done")
+        .single();
+
+      if (error || !data) {
+        console.log("Erro ao inserir tarefa no Supabase:", error);
+        return;
+      }
+
+      setTasks((prev) => [mapTask(data), ...prev]);
+    },
+    [userId]
+  );
+
+  const toggleTask = useCallback(async (id) => {
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({ is_done: true })
+      .eq("id", id)
+      .select("id, is_done")
+      .single();
+
+    if (error || !data) return;
+
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t))
+      prev.map((task) => (task.id === id ? { ...task, done: Boolean(data.is_done) } : task))
     );
   }, []);
 
-  const removeTask = useCallback((id) => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
+  const removeTask = useCallback(async (id) => {
+    await supabase.from("tasks").delete().eq("id", id);
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   }, []);
 
   return { tasks, addTask, toggleTask, removeTask };

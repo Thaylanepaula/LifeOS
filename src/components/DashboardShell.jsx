@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabaseClient.js";
 import { Sidebar } from "./Sidebar.jsx";
 import { HomeView } from "../views/HomeView.jsx";
@@ -18,7 +18,49 @@ const PROFILE_MODULES = {
 
 export function DashboardShell({ session }) {
   const [nav, setNav] = useState("home");
-  const { tasks, addTask, toggleTask } = useTasks();
+  const taskUserId = session?.user?.id ?? null;
+  const { tasks, addTask, toggleTask } = useTasks(taskUserId);
+  const [profileData, setProfileData] = useState({
+    displayName: "",
+    avatarUrl: "",
+    energyLevel: 100,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProfileData() {
+      const { data: authData } = await supabase.auth.getUser();
+      const userId = authData?.user?.id;
+
+      if (!userId || !active) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("display_name, avatar_url, energy_level")
+        .eq("id", userId)
+        .single();
+
+      if (error || !active) return;
+
+      const parsedEnergy = Number(data.energy_level);
+
+      setProfileData({
+        displayName:
+          typeof data.display_name === "string" ? data.display_name.trim() : "",
+        avatarUrl: typeof data.avatar_url === "string" ? data.avatar_url : "",
+        energyLevel: Number.isFinite(parsedEnergy)
+          ? Math.max(0, Math.min(100, parsedEnergy))
+          : 100,
+      });
+    }
+
+    loadProfileData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const stats = useMemo(() => {
     const total = tasks.length;
@@ -43,14 +85,17 @@ export function DashboardShell({ session }) {
   const rawName = session.user?.user_metadata?.full_name;
   const profile = session.user?.user_metadata?.template_profile;
   const activeModules = session.user?.user_metadata?.active_modules;
-  const welcomeName =
+  const fallbackName =
     typeof rawName === "string" && rawName.trim() !== ""
       ? rawName.trim()
       : "Usuária";
+  const welcomeName = profileData.displayName || fallbackName;
   const enabledNavIds =
     Array.isArray(activeModules) && activeModules.length > 0
       ? activeModules
       : PROFILE_MODULES[profile] ?? DEFAULT_MODULES;
+  const energyLevel = profileData.energyLevel;
+  const avatarInitial = (welcomeName?.[0] ?? "U").toUpperCase();
 
   const mainContent = (() => {
     switch (nav) {
@@ -83,7 +128,30 @@ export function DashboardShell({ session }) {
           Centro de comando
         </span>
         <span className="auth-bar__spacer" aria-hidden />
+        <div className="auth-bar__energy" role="group" aria-label="Nível de energia">
+          <div className="auth-bar__energy-track" aria-hidden>
+            <span
+              className="auth-bar__energy-fill"
+              style={{ width: `${energyLevel}%` }}
+            />
+          </div>
+          <span className="auth-bar__energy-value">{energyLevel}%</span>
+        </div>
         <span className="auth-bar__email">{email}</span>
+        <div className="auth-bar__profile">
+          <span className="auth-bar__name">{welcomeName}</span>
+          {profileData.avatarUrl ? (
+            <img
+              src={profileData.avatarUrl}
+              alt={`Avatar de ${welcomeName}`}
+              className="auth-bar__avatar"
+            />
+          ) : (
+            <span className="auth-bar__avatar auth-bar__avatar--fallback" aria-hidden>
+              {avatarInitial}
+            </span>
+          )}
+        </div>
         <button
           type="button"
           className="auth-bar__out"

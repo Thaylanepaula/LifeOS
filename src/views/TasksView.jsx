@@ -4,9 +4,9 @@ import { TaskCard } from "../components/TaskCard.jsx";
 export function TasksView({ tasks, onToggle, onAdd }) {
   const [draft, setDraft] = useState("");
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
-    onAdd(draft, { dueLabel: "Nova", priority: "media" });
+    await onAdd(draft, { dueLabel: "Nova", priority: "media" });
     setDraft("");
   }
 
